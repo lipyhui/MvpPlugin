@@ -3,7 +3,7 @@ package $packagename;
 import android.os.Bundle;
 import android.view.View;
 
-import $basepackagename.MvpBaseFragment;
+import $basepackagename.BaseFragment;
 
 /**
  * @author $author
