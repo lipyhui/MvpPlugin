@@ -1,20 +1,20 @@
-package $packagename
+package $packagename;
 
 import $basepackagename.BasePresenter;
 import $basepackagename.BaseView;
 
 /**
  * @author $author
- * @Package $packagename
- * @Description $description
- * date $date
+ * @Description: $description
+ * @date $date
  */
- public interface $nameContract {
+public interface $nameContract {
+
     interface View extends BaseView<Presenter> {
-        //TODO add your code here
+
     }
 
     interface Presenter extends BasePresenter {
-        //TODO add your code here
+
     }
- }
+}

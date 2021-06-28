@@ -1,0 +1,10 @@
+package $basepackagename;
+
+/**
+ * @author $author
+ * @Description: $description
+ * @date $date
+ */
+public interface BasePresenter {
+    void start();
+}

@@ -1,8 +1,12 @@
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,11 +19,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MvpCreateAction extends AnAction {
-
-
     private Project project;
     //包名
-    private String packageName = "";
+    private String mPackageName;
+    //右键选中目录
+    private String mDirectoryPath;
     private String mAuthor;//作者
     private String mModuleName;//模块名称
 
@@ -30,7 +34,9 @@ public class MvpCreateAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         project = e.getData(PlatformDataKeys.PROJECT);
-        packageName = getPackageName();
+        mPackageName = getPackageName();
+        mDirectoryPath = getSelectDir(e);
+
         init();
         refreshProject(e);
     }
@@ -101,7 +107,7 @@ public class MvpCreateAction extends AnAction {
                 break;
             case MvpBaseActivity:
                 if (!new File(basePath + "MvpBaseActivity.java").exists()){
-                    fileName = "TemplateMvpBaseActivity.txt";
+                    fileName = "TemplateBaseActivity.txt";
                     content = ReadTemplateFile(fileName);
                     content = dealTemplateContent(content);
                     writeToFile(content, basePath, "MvpBaseActivity.java");
@@ -109,7 +115,7 @@ public class MvpCreateAction extends AnAction {
                 break;
             case MvpBaseFragment:
                 if (!new File(basePath + "MvpBaseFragment.java").exists()){
-                    fileName = "TemplateMvpBaseFragment.txt";
+                    fileName = "TemplateBaseFragment.txt";
                     content = ReadTemplateFile(fileName);
                     content = dealTemplateContent(content);
                     writeToFile(content, basePath, "MvpBaseFragment.java");
@@ -125,7 +131,7 @@ public class MvpCreateAction extends AnAction {
     private void createClassFile(CodeType codeType) {
         String fileName = "";
         String content = "";
-        String appPath = getAppPath();
+        String appPath = getSelectPath();
         switch (codeType){
             case Activity:
                 fileName = "TemplateActivity.txt";
@@ -159,9 +165,18 @@ public class MvpCreateAction extends AnAction {
      * @return
      */
     private String getAppPath(){
-        String packagePath = packageName.replace(".", "/");
+        String packagePath = mPackageName.replace(".", "/");
         String appPath = project.getBasePath() + "/App/src/main/java/" + packagePath + "/";
         return appPath;
+    }
+
+    /**
+     * 获取包名文件路径
+     * @return
+     */
+    private String getSelectPath(){
+        String path = mDirectoryPath.replace("\\", "/");
+        return path + "/";
     }
 
     /**
@@ -172,10 +187,10 @@ public class MvpCreateAction extends AnAction {
     private String dealTemplateContent(String content) {
         content = content.replace("$name", mModuleName);
         if (content.contains("$packagename")){
-            content = content.replace("$packagename", packageName + "." + mModuleName.toLowerCase());
+            content = content.replace("$packagename", mPackageName);
         }
         if (content.contains("$basepackagename")){
-            content = content.replace("$basepackagename", packageName + ".base");
+            content = content.replace("$basepackagename", mPackageName + ".base");
         }
         content = content.replace("$author", mAuthor);
         content = content.replace("$date", getDate());
@@ -260,26 +275,46 @@ public class MvpCreateAction extends AnAction {
     }
 
     /**
-     * 从AndroidManifest.xml文件中获取当前app的包名
+     * 获取右键选中目录
+     * @return
+     */
+    private String getSelectDir(AnActionEvent e) {
+        Project fatherProject = e.getProject();
+        if (fatherProject == null) {
+            return "";
+        }
+        //获取所选的目录，即需要添加类的的包路径file
+        VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+
+        if (virtualFile == null || !virtualFile.isDirectory()) {
+            Messages.showInfoMessage(project,"get err !!!!!!!","title");
+            return "";
+        }
+        //通过所选文件，获取包的directory
+        PsiDirectory directory = PsiDirectoryFactory.getInstance(fatherProject).createDirectory(virtualFile);
+        return directory.toString().substring(13);
+    }
+
+    /**
+     * 从AndroidManifest中获取包名
      * @return
      */
     private String getPackageName() {
         String package_name = "";
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(project.getBasePath() + "/App/src/main/AndroidManifest.xml");
-
-            NodeList nodeList = doc.getElementsByTagName("manifest");
-            for (int i = 0; i < nodeList.getLength(); i++){
-                Node node = nodeList.item(i);
-                Element element = (Element) node;
-                package_name = element.getAttribute("package");
+            try {
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document doc = db.parse(project.getBasePath() + "/App/src/main/AndroidManifest.xml");
+                NodeList nodeList = doc.getElementsByTagName("manifest");
+                for (int i = 0; i < nodeList.getLength(); i++){
+                        Node node = nodeList.item(i);
+                        Element element = (Element) node;
+                        package_name = element.getAttribute("package");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return package_name;
     }
+
 }
