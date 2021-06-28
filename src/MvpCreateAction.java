@@ -186,7 +186,7 @@ public class MvpCreateAction extends AnAction {
     private String dealTemplateContent(String content) {
         content = content.replace("$name", mModuleName);
         if (content.contains("$packagename")){
-            String dirName = getSelectPath().substring(getAppPath().length()).replace("/", ".");
+            String dirName = getSelectPath().substring(getAppPath().length()).replace("/", ".s");
             content = content.replace("$packagename", mPackageName+ "." + dirName + mModuleName.toLowerCase());
         }
         if (content.contains("$basepackagename")){
