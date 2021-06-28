@@ -28,7 +28,7 @@ public class MvpCreateAction extends AnAction {
     private String mModuleName;//模块名称
 
     private enum  CodeType {
-        Activity, Fragment, Contract, Presenter, BaseView, BasePresenter, MvpBaseActivity, MvpBaseFragment
+        Activity, Fragment, Contract, Presenter, BaseView, BasePresenter, BaseActivity, BaseFragment
     }
 
     @Override
@@ -59,7 +59,6 @@ public class MvpCreateAction extends AnAction {
                 mAuthor = author;
                 mModuleName = moduleName;
                 createClassFiles();
-                Messages.showInfoMessage(project,"create mvp code success","title");
             }
         });
         mvpDialog.pack();
@@ -76,8 +75,8 @@ public class MvpCreateAction extends AnAction {
         createClassFile(CodeType.Presenter);
         createBaseClassFile(CodeType.BaseView);
         createBaseClassFile(CodeType.BasePresenter);
-        createBaseClassFile(CodeType.MvpBaseActivity);
-        createBaseClassFile(CodeType.MvpBaseFragment);
+        createBaseClassFile(CodeType.BaseActivity);
+        createBaseClassFile(CodeType.BaseFragment);
     }
 
     /**
@@ -105,20 +104,20 @@ public class MvpCreateAction extends AnAction {
                     writeToFile(content, basePath, "BasePresenter.java");
                 }
                 break;
-            case MvpBaseActivity:
-                if (!new File(basePath + "MvpBaseActivity.java").exists()){
+            case BaseActivity:
+                if (!new File(basePath + "BaseActivity.java").exists()){
                     fileName = "TemplateBaseActivity.txt";
                     content = ReadTemplateFile(fileName);
                     content = dealTemplateContent(content);
-                    writeToFile(content, basePath, "MvpBaseActivity.java");
+                    writeToFile(content, basePath, "BaseActivity.java");
                 }
                 break;
-            case MvpBaseFragment:
-                if (!new File(basePath + "MvpBaseFragment.java").exists()){
+            case BaseFragment:
+                if (!new File(basePath + "BaseFragment.java").exists()){
                     fileName = "TemplateBaseFragment.txt";
                     content = ReadTemplateFile(fileName);
                     content = dealTemplateContent(content);
-                    writeToFile(content, basePath, "MvpBaseFragment.java");
+                    writeToFile(content, basePath, "BaseFragment.java");
                 }
                 break;
         }
@@ -187,7 +186,8 @@ public class MvpCreateAction extends AnAction {
     private String dealTemplateContent(String content) {
         content = content.replace("$name", mModuleName);
         if (content.contains("$packagename")){
-            content = content.replace("$packagename", mPackageName);
+            String dirName = getSelectPath().substring(getAppPath().length()).replace("/", ".");
+            content = content.replace("$packagename", mPackageName+ "." + dirName + mModuleName.toLowerCase());
         }
         if (content.contains("$basepackagename")){
             content = content.replace("$basepackagename", mPackageName + ".base");

@@ -8,7 +8,7 @@ import $basepackagename.BaseFragment;
  * @Description: $description
  * @date $date
  */
-public class $nameActivity extends MvpBaseActivity{
+public class $nameActivity extends BaseActivity{
 
     private $nameFragment m$nameFragment;
 
@@ -23,7 +23,7 @@ public class $nameActivity extends MvpBaseActivity{
     }
 
     @Override
-    protected MvpBaseFragment getFirstFragment() {
+    protected BaseFragment getFirstFragment() {
         m$nameFragment = $nameFragment.getInstance();
         return m$nameFragment;
     }

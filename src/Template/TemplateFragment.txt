@@ -10,7 +10,7 @@ import $basepackagename.BaseFragment;
  * @Description: $description
  * @date $date
  */
-public class $nameFragment extends MvpBaseFragment implements $nameContract.View{
+public class $nameFragment extends BaseFragment implements $nameContract.View{
 
     private $nameContract.Presenter mPresenter;
 
