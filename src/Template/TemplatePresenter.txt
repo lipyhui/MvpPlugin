@@ -1,26 +1,15 @@
 package $packagename;
 
-import android.content.Context;
+import $basepackagename.BasePresenter;
 
 /**
  * @author $author
- * @Description: $description
  * @date $date
+ * @Description:
  */
-public class $namePresenter implements $nameContract.Presenter{
+public class $namePresenter extends BasePresenter<$nameView> {
 
-    private Context mContext;
-    private $nameContract.View mView;
-
-    public $namePresenter(Context context, $nameContract.View view) {
-        this.mContext = context;
-        this.mView = view;
-        mView.setPresenter(this);
+    public $namePresenter($nameView view) {
+        super(view);
     }
-
-    @Override
-    public void start() {
-
-    }
-
 }

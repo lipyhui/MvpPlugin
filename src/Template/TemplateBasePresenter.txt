@@ -2,9 +2,17 @@ package $basepackagename;
 
 /**
  * @author $author
- * @Description: $description
  * @date $date
+ * @Description:
  */
-public interface BasePresenter {
-    void start();
+public class BasePresenter<T extends IView> {
+    protected T mView;
+
+    protected BasePresenter(T view) {
+        mView = view;
+    }
+
+    public void onDestroy() {
+        mView = null;
+    }
 }

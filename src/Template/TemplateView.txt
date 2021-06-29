@@ -1,0 +1,11 @@
+package $packagename;
+
+import $basepackagename.BaseView;
+
+/**
+ * @author $author
+ * @date $date
+ * @Description:
+ */
+public interface $nameView extends BaseView {
+}

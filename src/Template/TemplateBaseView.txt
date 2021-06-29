@@ -1,10 +1,12 @@
 package $basepackagename;
 
+import android.app.Activity;
+
 /**
  * @author $author
- * @Description: $description
  * @date $date
+ * @Description:
  */
-public interface BaseView<T> {
-    void setPresenter(T presenter);
+public interface BaseView extends IView {
+    public Activity getActivity();
 }

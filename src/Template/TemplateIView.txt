@@ -1,0 +1,9 @@
+package $basepackagename;
+
+/**
+ * @author $author
+ * @date $date
+ * @Description: 
+ */
+public interface IView {
+}

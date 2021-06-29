@@ -28,7 +28,7 @@ public class MvpCreateAction extends AnAction {
     private String mModuleName;//模块名称
 
     private enum  CodeType {
-        Activity, Fragment, Contract, Presenter, BaseView, BasePresenter, BaseActivity, BaseFragment
+        Activity, View, Presenter, IView, BaseView, BasePresenter, BaseActivity
     }
 
     @Override
@@ -69,14 +69,14 @@ public class MvpCreateAction extends AnAction {
      * 生成类文件
      */
     private void createClassFiles() {
-        createClassFile(CodeType.Activity);
-        createClassFile(CodeType.Fragment);
-        createClassFile(CodeType.Contract);
-        createClassFile(CodeType.Presenter);
+        createBaseClassFile(CodeType.IView);
         createBaseClassFile(CodeType.BaseView);
         createBaseClassFile(CodeType.BasePresenter);
         createBaseClassFile(CodeType.BaseActivity);
-        createBaseClassFile(CodeType.BaseFragment);
+
+        createClassFile(CodeType.Activity);
+        createClassFile(CodeType.View);
+        createClassFile(CodeType.Presenter);
     }
 
     /**
@@ -88,6 +88,14 @@ public class MvpCreateAction extends AnAction {
         String content = "";
         String basePath = getAppPath() + "base/";
         switch (codeType){
+            case IView:
+                if (!new File(basePath + "IView.java").exists()){
+                    fileName = "TemplateIView.txt";
+                    content = ReadTemplateFile(fileName);
+                    content = dealTemplateContent(content);
+                    writeToFile(content, basePath, "IView.java");
+                }
+                break;
             case BaseView:
                 if (!new File(basePath + "BaseView.java").exists()){
                     fileName = "TemplateBaseView.txt";
@@ -112,14 +120,6 @@ public class MvpCreateAction extends AnAction {
                     writeToFile(content, basePath, "BaseActivity.java");
                 }
                 break;
-            case BaseFragment:
-                if (!new File(basePath + "BaseFragment.java").exists()){
-                    fileName = "TemplateBaseFragment.txt";
-                    content = ReadTemplateFile(fileName);
-                    content = dealTemplateContent(content);
-                    writeToFile(content, basePath, "BaseFragment.java");
-                }
-                break;
         }
     }
 
@@ -138,17 +138,11 @@ public class MvpCreateAction extends AnAction {
                 content = dealTemplateContent(content);
                 writeToFile(content, appPath + mModuleName.toLowerCase(), mModuleName + "Activity.java");
                 break;
-            case Fragment:
-                fileName = "TemplateFragment.txt";
+            case View:
+                fileName = "TemplateView.txt";
                 content = ReadTemplateFile(fileName);
                 content = dealTemplateContent(content);
-                writeToFile(content, appPath + mModuleName.toLowerCase(), mModuleName + "Fragment.java");
-                break;
-            case Contract:
-                fileName = "TemplateContract.txt";
-                content = ReadTemplateFile(fileName);
-                content = dealTemplateContent(content);
-                writeToFile(content, appPath + mModuleName.toLowerCase(), mModuleName + "Contract.java");
+                writeToFile(content, appPath + mModuleName.toLowerCase(), mModuleName + "View.java");
                 break;
             case Presenter:
                 fileName = "TemplatePresenter.txt";
